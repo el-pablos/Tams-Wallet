@@ -82,4 +82,10 @@
     <color name="bottom_nav_background">#FFFFFF</color>
     <color name="bottom_nav_selected">#000000</color>
     <color name="bottom_nav_unselected">#9E9E9E</color>
+    
+    <!-- Dark Theme Colors - Missing Colors Fix -->
+    <color name="dark_primary">#A2D5C6</color>
+    <color name="dark_background">#1A1A1A</color>
+    <color name="dark_surface">#2A2A2A</color>
+    <color name="dark_text">#FFFFFF</color>
 </resources>
