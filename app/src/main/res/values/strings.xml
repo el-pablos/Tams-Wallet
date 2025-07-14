@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tams Wallet</string>
+    <string name="app_tagline">Kelola Keuangan Anda dengan Mudah</string>
+    
+    <!-- Common Strings -->
+    <string name="login">Masuk</string>
+    <string name="register">Daftar</string>
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="delete">Hapus</string>
+    <string name="edit">Edit</string>
+    <string name="ok">OK</string>
+    <string name="yes">Ya</string>
+    <string name="no">Tidak</string>
+    <string name="next">Selanjutnya</string>
+    <string name="skip">Lewati</string>
+    <string name="back">Kembali</string>
+    <string name="done">Selesai</string>
+    <string name="loading">Memuat...</string>
+    
+    <!-- Auth Strings -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Konfirmasi Password</string>
+    <string name="name">Nama</string>
+    <string name="two_factor_auth">Autentikasi 2 Faktor</string>
+    <string name="biometric_auth">Autentikasi Biometrik</string>
+    <string name="forgot_password">Lupa Password?</string>
+    <string name="have_account">Sudah punya akun?</string>
+    <string name="no_account">Belum punya akun?</string>
+    
+    <!-- Dashboard Strings -->
+    <string name="total_balance">Saldo Total</string>
+    <string name="today_income">Pendapatan Hari Ini</string>
+    <string name="today_expense">Pengeluaran Hari Ini</string>
+    <string name="add_transaction">Tambah Transaksi</string>
+    <string name="recent_transactions">Transaksi Terbaru</string>
+    <string name="expense_chart">Grafik Pengeluaran</string>
+    
+    <!-- Transaction Strings -->
+    <string name="amount">Jumlah</string>
+    <string name="type">Jenis</string>
+    <string name="category">Kategori</string>
+    <string name="date">Tanggal</string>
+    <string name="description">Deskripsi</string>
+    <string name="income">Pemasukan</string>
+    <string name="expense">Pengeluaran</string>
+    <string name="add_transaction_title">Tambah Transaksi</string>
+    <string name="edit_transaction_title">Edit Transaksi</string>
+    
+    <!-- Budget Strings -->
+    <string name="budget">Anggaran</string>
+    <string name="add_budget">Tambah Anggaran</string>
+    <string name="budget_limit">Limit Anggaran</string>
+    <string name="budget_spent">Terpakai</string>
+    <string name="budget_remaining">Sisa</string>
+    <string name="period">Periode</string>
+    <string name="weekly">Mingguan</string>
+    <string name="monthly">Bulanan</string>
+    
+    <!-- History Strings -->
+    <string name="transaction_history">Riwayat Transaksi</string>
+    <string name="search_transactions">Cari transaksi...</string>
+    <string name="no_transactions">Belum ada transaksi</string>
+    <string name="filter">Filter</string>
+    
+    <!-- Settings Strings -->
+    <string name="settings">Pengaturan</string>
+    <string name="profile">Profil</string>
+    <string name="theme">Tema</string>
+    <string name="dark_mode">Mode Gelap</string>
+    <string name="security">Keamanan</string>
+    <string name="backup">Backup</string>
+    <string name="export">Export</string>
+    <string name="reset">Reset Data</string>
+    <string name="change_password">Ubah Password</string>
+    <string name="upload_image">Upload Gambar</string>
+    <string name="backup_csv">Backup CSV</string>
+    <string name="backup_json">Backup JSON</string>
+    
+    <!-- Navigation Strings -->
+    <string name="nav_home">Beranda</string>
+    <string name="nav_add">Tambah</string>
+    <string name="nav_history">Riwayat</string>
+    <string name="nav_budget">Anggaran</string>
+    <string name="nav_settings">Pengaturan</string>
+    
+    <!-- Categories -->
+    <string name="category_food">Makanan</string>
+    <string name="category_transport">Transport</string>
+    <string name="category_shopping">Belanja</string>
+    <string name="category_bills">Tagihan</string>
+    <string name="category_entertainment">Hiburan</string>
+    <string name="category_health">Kesehatan</string>
+    <string name="category_salary">Gaji</string>
+    <string name="category_freelance">Freelance</string>
+    <string name="category_investment">Investasi</string>
+    <string name="category_other">Lainnya</string>
+    
+    <!-- Error Messages -->
+    <string name="error_email_empty">Email tidak boleh kosong</string>
+    <string name="error_email_invalid">Format email tidak valid</string>
+    <string name="error_password_empty">Password tidak boleh kosong</string>
+    <string name="error_password_short">Password minimal 6 karakter</string>
+    <string name="error_password_mismatch">Password tidak sama</string>
+    <string name="error_name_empty">Nama tidak boleh kosong</string>
+    <string name="error_amount_empty">Jumlah tidak boleh kosong</string>
+    <string name="error_amount_invalid">Format jumlah tidak valid</string>
+    <string name="error_network">Koneksi internet bermasalah</string>
+    
+    <!-- Success Messages -->
+    <string name="success_login">Login berhasil</string>
+    <string name="success_register">Registrasi berhasil</string>
+    <string name="success_transaction_added">Transaksi berhasil ditambahkan</string>
+    <string name="success_transaction_updated">Transaksi berhasil diupdate</string>
+    <string name="success_transaction_deleted">Transaksi berhasil dihapus</string>
+    <string name="success_budget_added">Anggaran berhasil ditambahkan</string>
+    <string name="success_export">Data berhasil diekspor</string>
+    
+    <!-- Confirmation Messages -->
+    <string name="confirm_delete_transaction">Hapus transaksi ini?</string>
+    <string name="confirm_delete_budget">Hapus anggaran ini?</string>
+    <string name="confirm_reset_data">Reset semua data? Tindakan ini tidak dapat dibatalkan.</string>
+    
+    <!-- Currency -->
+    <string name="currency_symbol">Rp</string>
+    <string name="currency_format">Rp %,d</string>
+</resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base dimensions -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="item_padding">12dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    
+    <!-- Text sizes -->
+    <dimen name="text_size_headline1">28sp</dimen>
+    <dimen name="text_size_headline2">22sp</dimen>
+    <dimen name="text_size_headline3">18sp</dimen>
+    <dimen name="text_size_body1">16sp</dimen>
+    <dimen name="text_size_body2">14sp</dimen>
+    <dimen name="text_size_caption">12sp</dimen>
+    
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    
+    <!-- Component sizes -->
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="input_height">56dp</dimen>
+    <dimen name="app_bar_height">56dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="fab_size">56dp</dimen>
+    
+    <!-- Card dimensions -->
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_corner_radius">8dp</dimen>
+    <dimen name="card_balance_height">120dp</dimen>
+    <dimen name="card_transaction_height">80dp</dimen>
+    
+    <!-- Icon sizes -->
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="icon_size_medium">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="icon_size_xl">48dp</dimen>
+    
+    <!-- Elevation -->
+    <dimen name="elevation_card">2dp</dimen>
+    <dimen name="elevation_fab">6dp</dimen>
+    <dimen name="elevation_app_bar">4dp</dimen>
+    <dimen name="elevation_bottom_nav">8dp</dimen>
+    
+    <!-- Responsive breakpoints -->
+    <dimen name="tablet_padding">24dp</dimen>
+    <dimen name="tablet_card_margin">12dp</dimen>
+    <dimen name="tablet_text_size_body1">18sp</dimen>
+    <dimen name="tablet_text_size_body2">16sp</dimen>
+</resources>
