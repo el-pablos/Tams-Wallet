@@ -1,6 +1,7 @@
 package com.tamswallet.app.data.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "users")
@@ -18,6 +19,7 @@ public class User {
     // Constructors
     public User() {}
 
+    @Ignore
     public User(String email, String name, String passwordHash) {
         this.email = email;
         this.name = name;

@@ -1,6 +1,7 @@
 package com.tamswallet.app.data.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "budgets")
@@ -17,6 +18,7 @@ public class Budget {
     // Constructors
     public Budget() {}
 
+    @Ignore
     public Budget(String category, double limit, String period) {
         this.category = category;
         this.limit = limit;

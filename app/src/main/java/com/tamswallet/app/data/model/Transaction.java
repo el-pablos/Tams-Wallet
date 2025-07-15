@@ -1,6 +1,7 @@
 package com.tamswallet.app.data.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import java.util.Date;
 
@@ -19,6 +20,7 @@ public class Transaction {
     // Constructors
     public Transaction() {}
 
+    @Ignore
     public Transaction(double amount, String type, String category, String description, Date date) {
         this.amount = amount;
         this.type = type;
