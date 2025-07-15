@@ -19,7 +19,7 @@ import com.tamswallet.app.utils.Converters;
 @TypeConverters({Converters.class})
 public abstract class TamsWalletDatabase extends RoomDatabase {
     
-    // DAO abstract methds
+    // DAO abstract methods
     public abstract TransactionDao transactionDao();
     public abstract BudgetDao budgetDao();
     public abstract UserDao userDao();

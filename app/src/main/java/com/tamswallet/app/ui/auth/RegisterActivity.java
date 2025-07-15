@@ -4,24 +4,34 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.repository.UserRepository;
 import com.tamswallet.app.ui.dashboard.MainActivity;
+import com.tamswallet.app.utils.SecurityUtils;
+import com.tamswallet.app.utils.SessionManager;
 
 public class RegisterActivity extends AppCompatActivity {
     
     private TextInputLayout tilName, tilEmail, tilPassword, tilConfirmPassword;
     private TextInputEditText etName, etEmail, etPassword, etConfirmPassword;
     private MaterialButton btnRegister, btnLogin;
+    
+    private UserRepository userRepository;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        userRepository = UserRepository.getInstance(this);
+        sessionManager = new SessionManager(this);
+        
         initViews();
         setupClickListeners();
     }
@@ -79,6 +89,9 @@ public class RegisterActivity extends AppCompatActivity {
         } else if (password.length() < 6) {
             tilPassword.setError("Password minimal 6 karakter");
             isValid = false;
+        } else if (!SecurityUtils.isPasswordStrong(password)) {
+            tilPassword.setError(SecurityUtils.getPasswordStrengthDescription(password));
+            isValid = false;
         }
 
         if (TextUtils.isEmpty(confirmPassword)) {
@@ -90,13 +103,43 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (isValid) {
-            // TODO: Implement user registration with Room database
-            // TODO: Hash password before storing
-            // TODO: Check if email already exists
+            // Disable button to prevent multiple clicks
+            btnRegister.setEnabled(false);
+            btnRegister.setText("Memproses...");
             
-            // For now, directly go to MainActivity
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+            // Register user
+            userRepository.registerUser(name, email, password, new UserRepository.RegisterCallback() {
+                @Override
+                public void onSuccess(long userId) {
+                    runOnUiThread(() -> {
+                        // Show success message
+                        Toast.makeText(RegisterActivity.this, "Registrasi berhasil! Silahkan login.", Toast.LENGTH_SHORT).show();
+                        
+                        // Navigate to login activity
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        intent.putExtra("email", email); // Pre-fill email in login
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        // Re-enable button
+                        btnRegister.setEnabled(true);
+                        btnRegister.setText("Daftar");
+                        
+                        // Show error message
+                        Toast.makeText(RegisterActivity.this, error, Toast.LENGTH_LONG).show();
+                        
+                        // Clear password fields on error
+                        etPassword.setText("");
+                        etConfirmPassword.setText("");
+                    });
+                }
+            });
         }
     }
 }

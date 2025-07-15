@@ -6,23 +6,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import com.tamswallet.app.R;
+import com.tamswallet.app.ui.auth.SplashActivity;
+import com.tamswallet.app.utils.SessionManager;
 
 public class SettingsFragment extends Fragment {
     
     private CardView cardProfile, cardTheme, cardSecurity, cardBackup, cardExport;
     private Switch switchDarkMode, switchBiometric;
-    private MaterialButton btnBackupCsv, btnBackupJson, btnExport, btnReset;
+    private MaterialButton btnBackupCsv, btnBackupJson, btnExport, btnReset, btnLogout;
+    private TextView tvUserName, tvUserEmail;
+    private SessionManager sessionManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        
+        sessionManager = new SessionManager(getContext());
         
         initViews(view);
         setupClickListeners();
@@ -45,6 +53,10 @@ public class SettingsFragment extends Fragment {
         btnBackupJson = view.findViewById(R.id.btnBackupJson);
         btnExport = view.findViewById(R.id.btnExport);
         btnReset = view.findViewById(R.id.btnReset);
+        btnLogout = view.findViewById(R.id.btnLogout);
+        
+        tvUserName = view.findViewById(R.id.tvUserName);
+        tvUserEmail = view.findViewById(R.id.tvUserEmail);
     }
 
     private void setupClickListeners() {
@@ -81,11 +93,20 @@ public class SettingsFragment extends Fragment {
             // TODO: Show confirmation dialog for reset
             showResetConfirmationDialog();
         });
+        
+        btnLogout.setOnClickListener(v -> {
+            showLogoutConfirmationDialog();
+        });
     }
 
     private void loadSettings() {
-        // TODO: Load saved settings from SharedPreferences
-        // Set switch states based on saved preferences
+        // Load user information
+        tvUserName.setText(sessionManager.getUserName());
+        tvUserEmail.setText(sessionManager.getUserEmail());
+        
+        // Load switch states
+        switchBiometric.setChecked(sessionManager.isBiometricEnabled());
+        switchDarkMode.setChecked(sessionManager.getThemeMode() == 1);
     }
 
     private void exportData(String format) {
@@ -99,5 +120,29 @@ public class SettingsFragment extends Fragment {
 
     private void showResetConfirmationDialog() {
         // TODO: Create and show confirmation dialog for data reset
+    }
+    
+    private void showLogoutConfirmationDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Logout")
+                .setMessage("Apakah Anda yakin ingin keluar?")
+                .setPositiveButton("Ya", (dialog, which) -> {
+                    performLogout();
+                })
+                .setNegativeButton("Batal", null)
+                .show();
+    }
+    
+    private void performLogout() {
+        sessionManager.logout();
+        
+        // Navigate to splash screen
+        Intent intent = new Intent(getContext(), SplashActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 }

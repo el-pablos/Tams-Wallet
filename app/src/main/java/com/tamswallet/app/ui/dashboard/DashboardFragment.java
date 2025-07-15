@@ -9,9 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import com.github.mikephil.charting.charts.PieChart;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.repository.TransactionRepository;
+import com.tamswallet.app.utils.CurrencyUtils;
+import com.tamswallet.app.utils.SessionManager;
 
 public class DashboardFragment extends Fragment {
     
@@ -19,13 +23,16 @@ public class DashboardFragment extends Fragment {
     private CardView cardTodayIncome, cardTodayExpense;
     private PieChart pieChart;
     
-    // TODO: Add ViewModel for dashboard data
-    // private DashboardViewModel viewModel;
+    private TransactionRepository transactionRepository;
+    private SessionManager sessionManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        
+        transactionRepository = TransactionRepository.getInstance(getContext());
+        sessionManager = new SessionManager(getContext());
         
         initViews(view);
         setupChart();
@@ -58,13 +65,54 @@ public class DashboardFragment extends Fragment {
     }
 
     private void observeData() {
-        // TODO: Observe LiveData from ViewModel
-        // Update balance, today's income/expense
-        // Update chart data
+        long userId = sessionManager.getUserId();
         
-        // Placeholder data
-        tvTotalBalance.setText("Rp 5,250,000");
-        tvTodayIncome.setText("Rp 150,000");
-        tvTodayExpense.setText("Rp 75,000");
+        // Observe total income
+        transactionRepository.getTotalIncomeByUserId(userId).observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double totalIncome) {
+                if (totalIncome == null) totalIncome = 0.0;
+                updateBalance(totalIncome);
+            }
+        });
+        
+        // Observe total expense
+        transactionRepository.getTotalExpenseByUserId(userId).observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double totalExpense) {
+                if (totalExpense == null) totalExpense = 0.0;
+                updateBalance(totalExpense);
+            }
+        });
+        
+        // Observe today's income
+        transactionRepository.getTodayIncomeByUserId(userId).observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double todayIncome) {
+                if (todayIncome == null) todayIncome = 0.0;
+                tvTodayIncome.setText(CurrencyUtils.formatCurrency(todayIncome));
+            }
+        });
+        
+        // Observe today's expense
+        transactionRepository.getTodayExpenseByUserId(userId).observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double todayExpense) {
+                if (todayExpense == null) todayExpense = 0.0;
+                tvTodayExpense.setText(CurrencyUtils.formatCurrency(todayExpense));
+            }
+        });
+    }
+    
+    private void updateBalance(Double amount) {
+        // This is a simplified version - you might want to calculate balance differently
+        // For now, we'll just use the total balance from the repository
+        transactionRepository.getTotalBalance().observe(getViewLifecycleOwner(), new Observer<Double>() {
+            @Override
+            public void onChanged(Double balance) {
+                if (balance == null) balance = 0.0;
+                tvTotalBalance.setText(CurrencyUtils.formatCurrency(balance));
+            }
+        });
     }
 }

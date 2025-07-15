@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.model.Transaction;
+import com.tamswallet.app.data.repository.TransactionRepository;
+import com.tamswallet.app.utils.SessionManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,11 +30,17 @@ public class AddTransactionActivity extends AppCompatActivity {
     private String[] transactionTypes = {"Income", "Expense"};
     private String[] incomeCategories = {"Gaji", "Freelance", "Investasi", "Lainnya"};
     private String[] expenseCategories = {"Makanan", "Transport", "Belanja", "Tagihan", "Hiburan", "Kesehatan", "Lainnya"};
+    
+    private TransactionRepository transactionRepository;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
+
+        transactionRepository = TransactionRepository.getInstance(this);
+        sessionManager = new SessionManager(this);
 
         initViews();
         setupDropdowns();
@@ -145,12 +155,36 @@ public class AddTransactionActivity extends AppCompatActivity {
             try {
                 double amount = Double.parseDouble(amountStr);
                 
-                // TODO: Save transaction to Room database
-                // Transaction transaction = new Transaction(amount, type.toLowerCase(), category, description, selectedDate.getTime());
-                // Use Repository or ViewModel to save
+                // Disable save button to prevent multiple saves
+                btnSave.setEnabled(false);
+                btnSave.setText("Menyimpan...");
                 
-                // For now, just finish the activity
-                finish();
+                // Create transaction object
+                Transaction transaction = new Transaction(amount, type.toLowerCase(), category, description, selectedDate.getTime());
+                transaction.setUserId(sessionManager.getUserId());
+                
+                // Save to database
+                transactionRepository.insertTransaction(transaction, new TransactionRepository.TransactionCallback() {
+                    @Override
+                    public void onSuccess(long transactionId) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddTransactionActivity.this, "Transaksi berhasil disimpan", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            // Re-enable save button
+                            btnSave.setEnabled(true);
+                            btnSave.setText("Simpan");
+                            
+                            Toast.makeText(AddTransactionActivity.this, error, Toast.LENGTH_LONG).show();
+                        });
+                    }
+                });
+                
             } catch (NumberFormatException e) {
                 tilAmount.setError("Format jumlah tidak valid");
             }

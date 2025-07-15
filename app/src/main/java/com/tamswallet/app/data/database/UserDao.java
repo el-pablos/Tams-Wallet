@@ -22,9 +22,12 @@ public interface UserDao {
     @Delete
     void delete(User user);
 
-    // TODO: Add authentication methods
+    // Authentication methods
     @Query("SELECT * FROM users WHERE email = :email AND passwordHash = :passwordHash")
     LiveData<User> authenticateUser(String email, String passwordHash);
+    
+    @Query("SELECT * FROM users WHERE email = :email AND passwordHash = :passwordHash")
+    User authenticateUserSync(String email, String passwordHash);
 
     @Query("SELECT COUNT(*) FROM users WHERE email = :email")
     int checkEmailExists(String email);

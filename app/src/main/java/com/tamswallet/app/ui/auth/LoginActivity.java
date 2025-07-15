@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Switch;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
@@ -11,7 +12,9 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.repository.UserRepository;
 import com.tamswallet.app.ui.dashboard.MainActivity;
+import com.tamswallet.app.utils.SessionManager;
 
 public class LoginActivity extends AppCompatActivity {
     
@@ -20,14 +23,32 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton btnLogin;
     private Switch switchTwoFactor;
     private MaterialButton btnRegister;
+    
+    private UserRepository userRepository;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        userRepository = UserRepository.getInstance(this);
+        sessionManager = new SessionManager(this);
+        
+        // Check if user is already logged in
+        if (sessionManager.isLoggedIn()) {
+            navigateToMainActivity();
+            return;
+        }
+
         initViews();
         setupClickListeners();
+        
+        // Pre-fill email if provided from registration
+        String prefilledEmail = getIntent().getStringExtra("email");
+        if (prefilledEmail != null && !prefilledEmail.isEmpty()) {
+            etEmail.setText(prefilledEmail);
+        }
     }
 
     private void initViews() {
@@ -68,14 +89,46 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (isValid) {
-            // TODO: Implement actual authentication with Room database
-            // TODO: Check if 2FA is enabled and handle accordingly
-            // TODO: Check if biometric is enabled
+            // Disable button to prevent multiple clicks
+            btnLogin.setEnabled(false);
+            btnLogin.setText("Memproses...");
             
-            // For now, directly go to MainActivity
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+            // Authenticate user
+            userRepository.authenticateUser(email, password, new UserRepository.AuthCallback() {
+                @Override
+                public void onSuccess(com.tamswallet.app.data.model.User user) {
+                    runOnUiThread(() -> {
+                        // Save user session
+                        sessionManager.createLoginSession(user);
+                        
+                        // Show success message
+                        Toast.makeText(LoginActivity.this, "Login berhasil! Selamat datang, " + user.getName(), Toast.LENGTH_SHORT).show();
+                        
+                        // Navigate to main activity
+                        navigateToMainActivity();
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        // Re-enable button
+                        btnLogin.setEnabled(true);
+                        btnLogin.setText("Login");
+                        
+                        // Show error message
+                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
         }
+    }
+    
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     // TODO: Implement biometric authentication

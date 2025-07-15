@@ -6,25 +6,31 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import com.tamswallet.app.R;
 import com.tamswallet.app.ui.dashboard.MainActivity;
+import com.tamswallet.app.utils.SessionManager;
 
 public class SplashActivity extends AppCompatActivity {
     
     private static final int SPLASH_DELAY = 2000; // 2 seconds
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // TODO: Check if user is already logged in
-        // TODO: Check if onboarding has been completed
+        sessionManager = new SessionManager(this);
         
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // For now, always go to onboarding
-                // TODO: Implement proper flow based on user state
-                startActivity(new Intent(SplashActivity.this, OnboardingActivity.class));
+                // Check if user is already logged in
+                if (sessionManager.isLoggedIn()) {
+                    // User is logged in, go to main activity
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                } else {
+                    // User is not logged in, go to onboarding
+                    startActivity(new Intent(SplashActivity.this, OnboardingActivity.class));
+                }
                 finish();
             }
         }, SPLASH_DELAY);
