@@ -48,4 +48,14 @@ public interface TransactionDao {
     // TODO: Add methods for pagination and search functionality
     @Query("SELECT * FROM transactions WHERE description LIKE :searchQuery OR category LIKE :searchQuery ORDER BY date DESC")
     LiveData<List<Transaction>> searchTransactions(String searchQuery);
+    
+    // Synchronous methods for background operations
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
+    List<Transaction> getAllTransactionsSync();
+    
+    @Query("DELETE FROM transactions")
+    void deleteAllTransactions();
+    
+    @Insert
+    void insertAllTransactions(List<Transaction> transactions);
 }

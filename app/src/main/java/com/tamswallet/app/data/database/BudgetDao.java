@@ -32,4 +32,14 @@ public interface BudgetDao {
     // TODO: Add method to update spent amount when transactions are added/modified
     @Query("UPDATE budgets SET spent = :spent WHERE category = :category")
     void updateSpentAmount(String category, double spent);
+    
+    // Synchronous methods for background operations
+    @Query("SELECT * FROM budgets ORDER BY category ASC")
+    List<Budget> getAllBudgetsSync();
+    
+    @Query("DELETE FROM budgets")
+    void deleteAllBudgets();
+    
+    @Insert
+    void insertAllBudgets(List<Budget> budgets);
 }
