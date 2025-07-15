@@ -4,11 +4,15 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.model.Budget;
+import com.tamswallet.app.data.repository.BudgetRepository;
+import com.tamswallet.app.utils.SessionManager;
 
 public class AddBudgetActivity extends AppCompatActivity {
     
@@ -19,11 +23,17 @@ public class AddBudgetActivity extends AppCompatActivity {
     
     private String[] categories = {"Makanan", "Transport", "Belanja", "Tagihan", "Hiburan", "Kesehatan", "Lainnya"};
     private String[] periods = {"Mingguan", "Bulanan"};
+    
+    private BudgetRepository budgetRepository;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_budget);
+
+        budgetRepository = BudgetRepository.getInstance(this);
+        sessionManager = new SessionManager(this);
 
         initViews();
         setupDropdowns();
@@ -89,12 +99,36 @@ public class AddBudgetActivity extends AppCompatActivity {
             try {
                 double limit = Double.parseDouble(limitStr);
                 
-                // TODO: Save budget to Room database
-                // Budget budget = new Budget(category, limit, period.toLowerCase());
-                // Use Repository or ViewModel to save
+                // Disable save button to prevent multiple saves
+                btnSave.setEnabled(false);
+                btnSave.setText("Menyimpan...");
                 
-                // For now, just finish the activity
-                finish();
+                // Create budget object
+                Budget budget = new Budget(category, limit, period.toLowerCase());
+                budget.setUserId(sessionManager.getUserId());
+                
+                // Save to database
+                budgetRepository.insertBudget(budget, new BudgetRepository.BudgetCallback() {
+                    @Override
+                    public void onSuccess(long budgetId) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(AddBudgetActivity.this, "Budget berhasil disimpan", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            // Re-enable save button
+                            btnSave.setEnabled(true);
+                            btnSave.setText("Simpan");
+                            
+                            Toast.makeText(AddBudgetActivity.this, error, Toast.LENGTH_LONG).show();
+                        });
+                    }
+                });
+                
             } catch (NumberFormatException e) {
                 tilLimit.setError("Format limit tidak valid");
             }

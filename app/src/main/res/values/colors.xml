@@ -88,4 +88,11 @@
     <color name="dark_background">#1A1A1A</color>
     <color name="dark_surface">#2A2A2A</color>
     <color name="dark_text">#FFFFFF</color>
+    
+    <!-- Material Design 3 Surface Colors -->
+    <color name="outline_color">#E0E0E0</color>
+    <color name="on_surface_color">#000000</color>
+    <color name="on_surface_variant_color">#4A4A4A</color>
+    <color name="on_background_color">#000000</color>
+    <color name="outline_variant_color">#F0F0F0</color>
 </resources>
