@@ -14,6 +14,7 @@ import com.tamswallet.app.R;
 import com.tamswallet.app.data.model.Transaction;
 import com.tamswallet.app.data.repository.TransactionRepository;
 import com.tamswallet.app.utils.SessionManager;
+import com.tamswallet.app.utils.ValidationUtils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -136,8 +137,10 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         boolean isValid = true;
 
-        if (TextUtils.isEmpty(amountStr)) {
-            tilAmount.setError("Jumlah tidak boleh kosong");
+        // Validate amount using ValidationUtils
+        String amountError = ValidationUtils.getAmountValidationError(amountStr);
+        if (amountError != null) {
+            tilAmount.setError(amountError);
             isValid = false;
         }
 
@@ -151,22 +154,60 @@ public class AddTransactionActivity extends AppCompatActivity {
             isValid = false;
         }
 
+        // Validate description
+        if (!ValidationUtils.isValidDescription(description)) {
+            tilDescription.setError("Deskripsi mengandung karakter tidak valid");
+            isValid = false;
+        }
+
+        // Check if date is selected
+        if (selectedDate == null) {
+            Toast.makeText(this, "Tanggal harus dipilih", Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+
         if (isValid) {
             try {
                 double amount = Double.parseDouble(amountStr);
-                
+
+                // Additional validation for amount
+                if (amount <= 0) {
+                    tilAmount.setError("Jumlah harus lebih dari 0");
+                    return;
+                }
+
+                if (amount > 999999999.99) {
+                    tilAmount.setError("Jumlah terlalu besar");
+                    return;
+                }
+
                 // Disable save button to prevent multiple saves
                 btnSave.setEnabled(false);
                 btnSave.setText("Menyimpan...");
-                
+
+                // Check if user is logged in
+                long userId = sessionManager.getUserId();
+                if (userId == -1) {
+                    Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                    btnSave.setEnabled(true);
+                    btnSave.setText("Simpan");
+                    return;
+                }
+
                 // Create transaction object
                 Transaction transaction = new Transaction(amount, type.toLowerCase(), category, description, selectedDate.getTimeInMillis());
-                transaction.setUserId(sessionManager.getUserId());
-                
+                transaction.setUserId(userId);
+
+                // Log transaction details for debugging
+                android.util.Log.d("AddTransaction", "Creating transaction: " +
+                    "Amount=" + amount + ", Type=" + type + ", Category=" + category +
+                    ", Date=" + selectedDate.getTimeInMillis() + ", UserId=" + sessionManager.getUserId());
+
                 // Save to database
                 transactionRepository.insertTransaction(transaction, new TransactionRepository.TransactionCallback() {
                     @Override
                     public void onSuccess(long transactionId) {
+                        android.util.Log.d("AddTransaction", "Transaction saved successfully with ID: " + transactionId);
                         runOnUiThread(() -> {
                             Toast.makeText(AddTransactionActivity.this, "Transaksi berhasil disimpan", Toast.LENGTH_SHORT).show();
                             finish();
@@ -175,18 +216,27 @@ public class AddTransactionActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(String error) {
+                        android.util.Log.e("AddTransaction", "Failed to save transaction: " + error);
                         runOnUiThread(() -> {
                             // Re-enable save button
                             btnSave.setEnabled(true);
                             btnSave.setText("Simpan");
-                            
-                            Toast.makeText(AddTransactionActivity.this, error, Toast.LENGTH_LONG).show();
+
+                            Toast.makeText(AddTransactionActivity.this, "Gagal menyimpan: " + error, Toast.LENGTH_LONG).show();
                         });
                     }
                 });
-                
+
             } catch (NumberFormatException e) {
+                android.util.Log.e("AddTransaction", "Number format exception: " + e.getMessage());
                 tilAmount.setError("Format jumlah tidak valid");
+                btnSave.setEnabled(true);
+                btnSave.setText("Simpan");
+            } catch (Exception e) {
+                android.util.Log.e("AddTransaction", "Unexpected error: " + e.getMessage());
+                Toast.makeText(this, "Terjadi kesalahan: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                btnSave.setEnabled(true);
+                btnSave.setText("Simpan");
             }
         }
     }
