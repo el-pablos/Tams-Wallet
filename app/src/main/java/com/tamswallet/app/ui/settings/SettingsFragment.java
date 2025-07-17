@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -67,20 +68,7 @@ public class SettingsFragment extends Fragment {
             startActivity(new Intent(getContext(), ProfileActivity.class));
         });
 
-        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Save dark mode preference
-            SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
-            prefs.edit().putBoolean("dark_mode", isChecked).apply();
-
-            // Apply theme change
-            int nightMode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
-            AppCompatDelegate.setDefaultNightMode(nightMode);
-
-            // Restart activity to apply theme
-            if (getActivity() != null) {
-                getActivity().recreate();
-            }
-        });
+        // Dark mode listener is set up in setupDarkModeListener() method
 
         switchBiometric.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // TODO: Implement biometric setting
@@ -113,17 +101,75 @@ public class SettingsFragment extends Fragment {
     }
 
     private void loadSettings() {
-        // Load user information
-        tvUserName.setText(sessionManager.getUserName());
-        tvUserEmail.setText(sessionManager.getUserEmail());
+        try {
+            // Load user information
+            String userName = sessionManager.getUserName();
+            String userEmail = sessionManager.getUserEmail();
 
-        // Load dark mode preference
-        SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
-        boolean isDarkMode = prefs.getBoolean("dark_mode", false);
-        switchDarkMode.setChecked(isDarkMode);
+            tvUserName.setText(userName != null ? userName : "User");
+            tvUserEmail.setText(userEmail != null ? userEmail : "user@example.com");
 
-        // Load biometric setting
-        switchBiometric.setChecked(sessionManager.isBiometricEnabled());
+            // Load dark mode preference with error handling
+            SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+            boolean isDarkMode = prefs.getBoolean("dark_mode", false);
+
+            // Set switch state without triggering listener
+            switchDarkMode.setOnCheckedChangeListener(null);
+            switchDarkMode.setChecked(isDarkMode);
+
+            // Re-attach listener after setting state
+            setupDarkModeListener();
+
+            // Load biometric setting
+            switchBiometric.setChecked(sessionManager.isBiometricEnabled());
+
+            android.util.Log.d("SettingsFragment", "Settings loaded - Dark mode: " + isDarkMode);
+
+        } catch (Exception e) {
+            android.util.Log.e("SettingsFragment", "Error loading settings: " + e.getMessage());
+            // Set default values on error
+            tvUserName.setText("User");
+            tvUserEmail.setText("user@example.com");
+            switchDarkMode.setChecked(false);
+            switchBiometric.setChecked(false);
+        }
+    }
+
+    private void setupDarkModeListener() {
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            try {
+                // Save dark mode preference
+                SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("dark_mode", isChecked);
+                editor.apply();
+
+                // Log theme change for debugging
+                android.util.Log.d("SettingsFragment", "Dark mode changed to: " + isChecked);
+
+                // Apply theme change
+                int nightMode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+                AppCompatDelegate.setDefaultNightMode(nightMode);
+
+                // Show feedback to user
+                String message = isChecked ? "Mode gelap diaktifkan" : "Mode terang diaktifkan";
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+
+                // Restart activity to apply theme with delay to ensure preference is saved
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        new android.os.Handler().postDelayed(() -> {
+                            getActivity().recreate();
+                        }, 100);
+                    });
+                }
+            } catch (Exception e) {
+                android.util.Log.e("SettingsFragment", "Error changing theme: " + e.getMessage());
+                Toast.makeText(getContext(), "Gagal mengubah tema", Toast.LENGTH_SHORT).show();
+                // Revert switch state
+                buttonView.setChecked(!isChecked);
+            }
+        });
     }
 
     private void exportData(String format) {

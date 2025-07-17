@@ -57,4 +57,15 @@
     <!-- Shimmer Colors - Dark Theme -->
     <color name="shimmer_base">#2D2D2D</color>
     <color name="shimmer_highlight">#3D3D3D</color>
+
+    <!-- Additional Material Design 3 Surface Colors - Dark Theme -->
+    <color name="outline_color">#444444</color>
+    <color name="on_surface_color">#FFFFFF</color>
+    <color name="on_surface_variant_color">#B3B3B3</color>
+    <color name="on_background_color">#FFFFFF</color>
+    <color name="outline_variant_color">#333333</color>
+
+    <!-- Status Bar and System UI - Dark Theme -->
+    <color name="status_bar_color">#121212</color>
+    <color name="navigation_bar_color">#121212</color>
 </resources>
