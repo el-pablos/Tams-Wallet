@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.biometric.BiometricManager;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
@@ -71,8 +72,7 @@ public class SettingsFragment extends Fragment {
         // Dark mode listener is set up in setupDarkModeListener() method
 
         switchBiometric.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // TODO: Implement biometric setting
-            // Enable/disable biometric authentication
+            handleBiometricToggle(isChecked);
         });
 
         btnBackupCsv.setOnClickListener(v -> {
@@ -170,6 +170,64 @@ public class SettingsFragment extends Fragment {
                 buttonView.setChecked(!isChecked);
             }
         });
+    }
+
+    private void handleBiometricToggle(boolean isEnabled) {
+        try {
+            // Check if biometric authentication is available
+            BiometricManager biometricManager = BiometricManager.from(getContext());
+
+            if (isEnabled) {
+                // User wants to enable biometric authentication
+                switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+                    case BiometricManager.BIOMETRIC_SUCCESS:
+                        // Biometric is available, save the setting
+                        sessionManager.setBiometricEnabled(true);
+                        Toast.makeText(getContext(), "Autentikasi biometrik diaktifkan", Toast.LENGTH_SHORT).show();
+                        android.util.Log.d("SettingsFragment", "Biometric authentication enabled");
+                        break;
+
+                    case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                        // No biometric hardware available
+                        switchBiometric.setChecked(false);
+                        Toast.makeText(getContext(), "Perangkat tidak mendukung autentikasi biometrik", Toast.LENGTH_LONG).show();
+                        android.util.Log.w("SettingsFragment", "No biometric hardware available");
+                        break;
+
+                    case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                        // Biometric hardware unavailable
+                        switchBiometric.setChecked(false);
+                        Toast.makeText(getContext(), "Autentikasi biometrik tidak tersedia saat ini", Toast.LENGTH_LONG).show();
+                        android.util.Log.w("SettingsFragment", "Biometric hardware unavailable");
+                        break;
+
+                    case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                        // No biometric enrolled
+                        switchBiometric.setChecked(false);
+                        Toast.makeText(getContext(), "Belum ada biometrik yang terdaftar di perangkat", Toast.LENGTH_LONG).show();
+                        android.util.Log.w("SettingsFragment", "No biometric enrolled");
+                        break;
+
+                    default:
+                        // Other error
+                        switchBiometric.setChecked(false);
+                        Toast.makeText(getContext(), "Tidak dapat mengaktifkan autentikasi biometrik", Toast.LENGTH_LONG).show();
+                        android.util.Log.e("SettingsFragment", "Unknown biometric error");
+                        break;
+                }
+            } else {
+                // User wants to disable biometric authentication
+                sessionManager.setBiometricEnabled(false);
+                Toast.makeText(getContext(), "Autentikasi biometrik dinonaktifkan", Toast.LENGTH_SHORT).show();
+                android.util.Log.d("SettingsFragment", "Biometric authentication disabled");
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e("SettingsFragment", "Error handling biometric toggle: " + e.getMessage());
+            switchBiometric.setChecked(false);
+            sessionManager.setBiometricEnabled(false);
+            Toast.makeText(getContext(), "Terjadi kesalahan saat mengatur biometrik", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void exportData(String format) {

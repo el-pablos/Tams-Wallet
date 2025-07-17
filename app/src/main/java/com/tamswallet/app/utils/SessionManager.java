@@ -90,6 +90,16 @@ public class SessionManager {
 
     public boolean hasStoredCredentials() {
         // Check if user has valid session and biometric is enabled
+        boolean hasValidSession = isLoggedIn() && getUserId() != -1;
+        boolean biometricEnabled = isBiometricEnabled();
+        boolean hasUserData = getUserName() != null && !getUserName().isEmpty() &&
+                             getUserEmail() != null && !getUserEmail().isEmpty();
+
+        return hasValidSession && biometricEnabled && hasUserData;
+    }
+
+    public boolean canUseBiometric() {
+        // Check if biometric can be used (user is logged in and has enabled biometric)
         return isLoggedIn() && isBiometricEnabled();
     }
 }

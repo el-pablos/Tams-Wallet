@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         setupClickListeners();
 
         // Check if biometric authentication is available and enabled
-        if (sessionManager.hasStoredCredentials()) {
+        if (sessionManager.canUseBiometric()) {
             setupBiometricAuth();
         }
 
@@ -165,26 +165,38 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                Toast.makeText(LoginActivity.this, "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                android.util.Log.e("LoginActivity", "Biometric authentication error: " + errorCode + " - " + errString);
+
+                // Handle specific error codes
+                if (errorCode == BiometricPrompt.ERROR_USER_CANCELED ||
+                    errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                    // User cancelled, don't show error message
+                    android.util.Log.d("LoginActivity", "User cancelled biometric authentication");
+                } else {
+                    Toast.makeText(LoginActivity.this, "Autentikasi biometrik gagal: " + errString, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                Toast.makeText(LoginActivity.this, "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+                android.util.Log.d("LoginActivity", "Biometric authentication succeeded");
 
                 // Auto-login with biometric success
                 if (sessionManager.hasStoredCredentials()) {
+                    Toast.makeText(LoginActivity.this, "Login berhasil dengan biometrik!", Toast.LENGTH_SHORT).show();
                     navigateToMainActivity();
                 } else {
                     Toast.makeText(LoginActivity.this, "Silakan login dengan email dan password terlebih dahulu", Toast.LENGTH_LONG).show();
+                    android.util.Log.w("LoginActivity", "Biometric succeeded but no stored credentials");
                 }
             }
 
             @Override
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
-                Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                android.util.Log.w("LoginActivity", "Biometric authentication failed");
+                Toast.makeText(LoginActivity.this, "Autentikasi biometrik gagal, coba lagi", Toast.LENGTH_SHORT).show();
             }
         });
 
