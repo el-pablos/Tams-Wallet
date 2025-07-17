@@ -14,6 +14,7 @@ public class Budget {
     private double spent;
     private String period; // "monthly", "weekly", etc.
     private long userId; // TODO: Link to user when auth is implemented
+    private long createdAt;
 
     // Constructors
     public Budget() {}
@@ -24,6 +25,7 @@ public class Budget {
         this.limit = limit;
         this.period = period;
         this.spent = 0.0;
+        this.createdAt = System.currentTimeMillis();
     }
 
     // Getters and Setters
@@ -44,6 +46,9 @@ public class Budget {
 
     public long getUserId() { return userId; }
     public void setUserId(long userId) { this.userId = userId; }
+
+    public long getCreatedAt() { return createdAt; }
+    public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
 
     // Helper methods
     public double getRemainingBudget() {

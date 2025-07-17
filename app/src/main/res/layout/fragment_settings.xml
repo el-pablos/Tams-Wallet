@@ -52,12 +52,14 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvUserName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tamas"
                         android:textAppearance="@style/TextAppearance.Tams.Headline2" />
 
                     <TextView
+                        android:id="@+id/tvUserEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="tamas@tamswallet.com"
@@ -248,6 +250,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/reset"
+                    android:textColor="@color/error_color"
+                    android:layout_marginTop="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLogout"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/logout"
                     android:textColor="@color/error_color"
                     android:layout_marginTop="8dp" />
 

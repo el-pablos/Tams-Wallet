@@ -3,7 +3,6 @@ package com.tamswallet.app.data.model;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import java.util.Date;
 
 @Entity(tableName = "transactions")
 public class Transaction {
@@ -14,14 +13,14 @@ public class Transaction {
     private String type; // "income" or "expense"
     private String category;
     private String description;
-    private Date date;
+    private long date;
     private long userId; // TODO: Link to user when auth is implemented
 
     // Constructors
     public Transaction() {}
 
     @Ignore
-    public Transaction(double amount, String type, String category, String description, Date date) {
+    public Transaction(double amount, String type, String category, String description, long date) {
         this.amount = amount;
         this.type = type;
         this.category = category;
@@ -45,8 +44,8 @@ public class Transaction {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public Date getDate() { return date; }
-    public void setDate(Date date) { this.date = date; }
+    public long getDate() { return date; }
+    public void setDate(long date) { this.date = date; }
 
     public long getUserId() { return userId; }
     public void setUserId(long userId) { this.userId = userId; }

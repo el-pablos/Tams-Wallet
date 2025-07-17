@@ -26,6 +26,23 @@ public class BudgetRepository {
         }
         return instance;
     }
+
+    /**
+     * Shutdown the executor service to prevent memory leaks
+     */
+    public void shutdown() {
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
     
     public LiveData<List<Budget>> getAllBudgets() {
         return budgetDao.getAllBudgets();
@@ -63,7 +80,7 @@ public class BudgetRepository {
     public void insertBudget(Budget budget, BudgetCallback callback) {
         executor.execute(() -> {
             try {
-                long id = budgetDao.insert(budget);
+                long id = budgetDao.insertBudget(budget);
                 if (callback != null) {
                     callback.onSuccess(id);
                 }

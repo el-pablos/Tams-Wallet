@@ -39,4 +39,8 @@ public abstract class TamsWalletDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+    
+    public static TamsWalletDatabase getInstance(final Context context) {
+        return getDatabase(context);
+    }
 }

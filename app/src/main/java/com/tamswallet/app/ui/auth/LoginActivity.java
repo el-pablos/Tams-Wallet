@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Switch;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
@@ -15,6 +17,7 @@ import com.tamswallet.app.R;
 import com.tamswallet.app.data.repository.UserRepository;
 import com.tamswallet.app.ui.dashboard.MainActivity;
 import com.tamswallet.app.utils.SessionManager;
+import java.util.concurrent.Executor;
 
 public class LoginActivity extends AppCompatActivity {
     
@@ -43,7 +46,12 @@ public class LoginActivity extends AppCompatActivity {
 
         initViews();
         setupClickListeners();
-        
+
+        // Check if biometric authentication is available and enabled
+        if (sessionManager.hasStoredCredentials()) {
+            setupBiometricAuth();
+        }
+
         // Pre-fill email if provided from registration
         String prefilledEmail = getIntent().getStringExtra("email");
         if (prefilledEmail != null && !prefilledEmail.isEmpty()) {
@@ -131,12 +139,61 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    // TODO: Implement biometric authentication
     private void setupBiometricAuth() {
+        // Check if biometric authentication is available
+        BiometricManager biometricManager = BiometricManager.from(this);
+
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                showBiometricPrompt();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Toast.makeText(this, "Perangkat tidak mendukung biometric", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Toast.makeText(this, "Biometric tidak tersedia saat ini", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Toast.makeText(this, "Belum ada biometric yang terdaftar", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private void showBiometricPrompt() {
+        Executor executor = ContextCompat.getMainExecutor(this);
+        BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                Toast.makeText(LoginActivity.this, "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Toast.makeText(LoginActivity.this, "Authentication succeeded!", Toast.LENGTH_SHORT).show();
+
+                // Auto-login with biometric success
+                if (sessionManager.hasStoredCredentials()) {
+                    navigateToMainActivity();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Silakan login dengan email dan password terlebih dahulu", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Login dengan Biometric")
-                .setSubtitle("Gunakan sidik jari atau face unlock")
+                .setSubtitle("Gunakan sidik jari atau face unlock untuk masuk")
                 .setNegativeButtonText("Batal")
                 .build();
+
+        biometricPrompt.authenticate(promptInfo);
     }
 }

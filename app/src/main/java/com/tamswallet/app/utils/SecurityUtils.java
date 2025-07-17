@@ -8,36 +8,65 @@ import java.util.Base64;
 
 public class SecurityUtils {
     
-    private static final String SALT = "TamsWallet2025SecureSalt";
     private static final int HASH_ITERATIONS = 10000;
-    
+    private static final int SALT_LENGTH = 16;
+
     /**
-     * Hash password using SHA-256 with salt
+     * Generate cryptographically secure random salt
      */
-    public static String hashPassword(String password) {
+    public static String generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[SALT_LENGTH];
+        random.nextBytes(salt);
+        return Base64.getEncoder().encodeToString(salt);
+    }
+
+    /**
+     * Hash password with provided salt using SHA-256
+     */
+    public static String hashPassword(String password, String salt) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            
+
             // Add salt to password
-            String saltedPassword = password + SALT;
-            
+            String saltedPassword = password + salt;
+
             // Hash multiple times for better security
             byte[] hash = saltedPassword.getBytes(StandardCharsets.UTF_8);
             for (int i = 0; i < HASH_ITERATIONS; i++) {
                 hash = md.digest(hash);
             }
-            
+
             // Convert to base64 for storage
             return Base64.getEncoder().encodeToString(hash);
-            
+
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("SHA-256 algorithm not available", e);
         }
     }
-    
+
     /**
-     * Verify password against stored hash
+     * Legacy method for backward compatibility - DO NOT USE FOR NEW CODE
      */
+    @Deprecated
+    public static String hashPassword(String password) {
+        // For backward compatibility only - uses fixed salt
+        String legacySalt = "TamsWallet2025SecureSalt";
+        return hashPassword(password, legacySalt);
+    }
+
+    /**
+     * Verify password against stored hash with salt
+     */
+    public static boolean verifyPassword(String password, String storedHash, String salt) {
+        String hashToCheck = hashPassword(password, salt);
+        return hashToCheck.equals(storedHash);
+    }
+
+    /**
+     * Legacy verification method - for backward compatibility only
+     */
+    @Deprecated
     public static boolean verifyPassword(String password, String storedHash) {
         String hashToCheck = hashPassword(password);
         return hashToCheck.equals(storedHash);

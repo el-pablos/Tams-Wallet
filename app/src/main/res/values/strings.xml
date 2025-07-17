@@ -122,8 +122,29 @@
     <string name="confirm_delete_transaction">Hapus transaksi ini?</string>
     <string name="confirm_delete_budget">Hapus anggaran ini?</string>
     <string name="confirm_reset_data">Reset semua data? Tindakan ini tidak dapat dibatalkan.</string>
-    
+
+    <!-- Actions -->
+    <string name="logout">Keluar</string>
+
     <!-- Currency -->
     <string name="currency_symbol">Rp</string>
     <string name="currency_format">Rp %,d</string>
+
+    <!-- UI States -->
+    <string name="please_wait">Mohon tunggu sebentar</string>
+    <string name="no_data_available">Tidak ada data</string>
+    <string name="empty_state">Kosong</string>
+    <string name="empty_state_description">Belum ada data untuk ditampilkan. Mulai dengan menambahkan transaksi pertama Anda.</string>
+    <string name="get_started">Mulai</string>
+    <string name="error_occurred">Terjadi Kesalahan</string>
+    <string name="error_message_generic">Terjadi kesalahan yang tidak terduga. Silakan coba lagi.</string>
+    <string name="retry">Coba Lagi</string>
+    <string name="go_back">Kembali</string>
+
+    <!-- Accessibility -->
+    <string name="content_description_profile">Foto profil</string>
+    <string name="content_description_add">Tambah</string>
+    <string name="content_description_menu">Menu</string>
+    <string name="content_description_back">Kembali</string>
+    <string name="content_description_close">Tutup</string>
 </resources>

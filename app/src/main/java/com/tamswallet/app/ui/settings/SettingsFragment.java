@@ -1,6 +1,8 @@
 package com.tamswallet.app.ui.settings;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
@@ -65,8 +68,18 @@ public class SettingsFragment extends Fragment {
         });
 
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // TODO: Implement theme switching
-            // Save preference and restart activity with new theme
+            // Save dark mode preference
+            SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+            prefs.edit().putBoolean("dark_mode", isChecked).apply();
+
+            // Apply theme change
+            int nightMode = isChecked ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+            AppCompatDelegate.setDefaultNightMode(nightMode);
+
+            // Restart activity to apply theme
+            if (getActivity() != null) {
+                getActivity().recreate();
+            }
         });
 
         switchBiometric.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -103,10 +116,14 @@ public class SettingsFragment extends Fragment {
         // Load user information
         tvUserName.setText(sessionManager.getUserName());
         tvUserEmail.setText(sessionManager.getUserEmail());
-        
-        // Load switch states
+
+        // Load dark mode preference
+        SharedPreferences prefs = getContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+        boolean isDarkMode = prefs.getBoolean("dark_mode", false);
+        switchDarkMode.setChecked(isDarkMode);
+
+        // Load biometric setting
         switchBiometric.setChecked(sessionManager.isBiometricEnabled());
-        switchDarkMode.setChecked(sessionManager.getThemeMode() == 1);
     }
 
     private void exportData(String format) {

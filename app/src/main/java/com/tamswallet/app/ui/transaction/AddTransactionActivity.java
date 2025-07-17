@@ -160,7 +160,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                 btnSave.setText("Menyimpan...");
                 
                 // Create transaction object
-                Transaction transaction = new Transaction(amount, type.toLowerCase(), category, description, selectedDate.getTime());
+                Transaction transaction = new Transaction(amount, type.toLowerCase(), category, description, selectedDate.getTimeInMillis());
                 transaction.setUserId(sessionManager.getUserId());
                 
                 // Save to database

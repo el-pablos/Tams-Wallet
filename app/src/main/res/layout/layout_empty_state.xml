@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp">
+
+    <!-- Empty State Icon -->
+    <ImageView
+        android:id="@+id/ivEmptyIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_budget_empty"
+        android:alpha="0.6"
+        android:contentDescription="@string/empty_state" />
+
+    <!-- Empty State Title -->
+    <TextView
+        android:id="@+id/tvEmptyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/no_data_available"
+        android:textAppearance="@style/TextAppearance.Tams.Headline2"
+        android:textColor="@color/text_primary"
+        android:gravity="center" />
+
+    <!-- Empty State Description -->
+    <TextView
+        android:id="@+id/tvEmptyDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/empty_state_description"
+        android:textAppearance="@style/TextAppearance.Tams.Body1"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:maxLines="3"
+        android:ellipsize="end" />
+
+    <!-- Action Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmptyAction"
+        style="@style/Widget.Tams.Button.Primary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/get_started"
+        android:visibility="gone" />
+
+</LinearLayout>

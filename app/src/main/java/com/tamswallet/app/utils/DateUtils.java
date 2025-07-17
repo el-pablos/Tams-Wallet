@@ -15,6 +15,10 @@ public class DateUtils {
         return dateFormat.format(date);
     }
 
+    public static String formatDate(long timestamp) {
+        return dateFormat.format(new Date(timestamp));
+    }
+
     public static String formatTime(Date date) {
         return timeFormat.format(date);
     }

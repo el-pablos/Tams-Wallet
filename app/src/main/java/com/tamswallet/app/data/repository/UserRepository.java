@@ -20,6 +20,23 @@ public class UserRepository {
         userDao = db.userDao();
         executor = Executors.newFixedThreadPool(4);
     }
+
+    /**
+     * Shutdown the executor service to prevent memory leaks
+     */
+    public void shutdown() {
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
     
     public static synchronized UserRepository getInstance(Context context) {
         if (instance == null) {

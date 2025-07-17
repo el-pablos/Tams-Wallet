@@ -26,6 +26,23 @@ public class TransactionRepository {
         }
         return instance;
     }
+
+    /**
+     * Shutdown the executor service to prevent memory leaks
+     */
+    public void shutdown() {
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
     
     public LiveData<List<Transaction>> getAllTransactions() {
         return transactionDao.getAllTransactions();
@@ -64,19 +81,27 @@ public class TransactionRepository {
     }
     
     public LiveData<Double> getTodayIncomeByUserId(long userId) {
-        return transactionDao.getTodayIncomeByUserId(userId);
+        long todayStart = getTodayStart();
+        long todayEnd = getTodayEnd();
+        return transactionDao.getTodayIncomeByUserId(userId, todayStart, todayEnd);
     }
     
     public LiveData<Double> getTodayExpenseByUserId(long userId) {
-        return transactionDao.getTodayExpenseByUserId(userId);
+        long todayStart = getTodayStart();
+        long todayEnd = getTodayEnd();
+        return transactionDao.getTodayExpenseByUserId(userId, todayStart, todayEnd);
     }
     
     public LiveData<Double> getMonthlyIncomeByUserId(long userId, int month, int year) {
-        return transactionDao.getMonthlyIncomeByUserId(userId, month, year);
+        long monthStart = getMonthStart(month, year);
+        long monthEnd = getMonthEnd(month, year);
+        return transactionDao.getMonthlyIncomeByUserId(userId, monthStart, monthEnd);
     }
     
     public LiveData<Double> getMonthlyExpenseByUserId(long userId, int month, int year) {
-        return transactionDao.getMonthlyExpenseByUserId(userId, month, year);
+        long monthStart = getMonthStart(month, year);
+        long monthEnd = getMonthEnd(month, year);
+        return transactionDao.getMonthlyExpenseByUserId(userId, monthStart, monthEnd);
     }
     
     public interface TransactionCallback {
@@ -87,7 +112,7 @@ public class TransactionRepository {
     public void insertTransaction(Transaction transaction, TransactionCallback callback) {
         executor.execute(() -> {
             try {
-                long id = transactionDao.insert(transaction);
+                long id = transactionDao.insertTransaction(transaction);
                 if (callback != null) {
                     callback.onSuccess(id);
                 }
@@ -135,5 +160,39 @@ public class TransactionRepository {
     
     public LiveData<List<Transaction>> searchTransactions(String query) {
         return transactionDao.searchTransactions("%" + query + "%");
+    }
+    
+    // Helper methods for date calculations
+    private long getTodayStart() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+    
+    private long getTodayEnd() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
+        cal.set(java.util.Calendar.MINUTE, 59);
+        cal.set(java.util.Calendar.SECOND, 59);
+        cal.set(java.util.Calendar.MILLISECOND, 999);
+        return cal.getTimeInMillis();
+    }
+    
+    private long getMonthStart(int month, int year) {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(year, month - 1, 1, 0, 0, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+    
+    private long getMonthEnd(int month, int year) {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.set(year, month - 1, 1, 0, 0, 0);
+        cal.add(java.util.Calendar.MONTH, 1);
+        cal.add(java.util.Calendar.MILLISECOND, -1);
+        return cal.getTimeInMillis();
     }
 }

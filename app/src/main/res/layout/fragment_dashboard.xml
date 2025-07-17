@@ -22,22 +22,28 @@
 
             <TextView
                 android:id="@+id/tvGreeting"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Selamat pagi,"
                 android:textAppearance="@style/TextAppearance.Tams.Body2"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivProfile" />
 
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Tamas"
                 android:textAppearance="@style/TextAppearance.Tams.Headline2"
                 android:layout_marginTop="@dimen/spacing_xs"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintTop_toBottomOf="@id/tvGreeting"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivProfile" />
 
             <ImageView
                 android:id="@+id/ivProfile"
@@ -69,20 +75,27 @@
                 android:padding="20dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/total_balance"
                     android:textAppearance="@style/TextAppearance.Tams.Body2"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
 
                 <TextView
                     android:id="@+id/tvTotalBalance"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Rp 5,250,000"
                     android:textAppearance="@style/TextAppearance.Tams.Balance"
                     android:textColor="@color/white"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="18sp"
+                    android:autoSizeMaxTextSize="32sp" />
 
             </LinearLayout>
 

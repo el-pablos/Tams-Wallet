@@ -87,4 +87,9 @@ public class SessionManager {
         editor.putString(KEY_USER_EMAIL, email);
         editor.apply();
     }
+
+    public boolean hasStoredCredentials() {
+        // Check if user has valid session and biometric is enabled
+        return isLoggedIn() && isBiometricEnabled();
+    }
 }

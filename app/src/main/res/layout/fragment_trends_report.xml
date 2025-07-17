@@ -105,6 +105,15 @@
         android:textColor="@color/text_primary"
         android:layout_marginBottom="8dp" />
 
+    <TextView
+        android:id="@+id/tvTrendsInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Financial trends analysis"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="8dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTrends"
         android:layout_width="match_parent"

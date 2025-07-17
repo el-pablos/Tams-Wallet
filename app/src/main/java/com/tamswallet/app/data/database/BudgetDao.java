@@ -42,4 +42,26 @@ public interface BudgetDao {
     
     @Insert
     void insertAllBudgets(List<Budget> budgets);
+    
+    // Additional methods needed by repositories
+    @Query("SELECT * FROM budgets WHERE userId = :userId ORDER BY category ASC")
+    LiveData<List<Budget>> getBudgetsByUserId(long userId);
+    
+    @Query("SELECT * FROM budgets WHERE period = :period ORDER BY category ASC")
+    LiveData<List<Budget>> getBudgetsByPeriod(String period);
+    
+    @Query("SELECT * FROM budgets WHERE spent < `limit` ORDER BY category ASC")
+    LiveData<List<Budget>> getActiveBudgets();
+    
+    @Query("SELECT * FROM budgets WHERE spent >= `limit` ORDER BY category ASC")
+    LiveData<List<Budget>> getExceededBudgets();
+    
+    @Query("DELETE FROM budgets")
+    void deleteAll();
+    
+    @Query("UPDATE budgets SET spent = :spent WHERE id = :budgetId")
+    void updateSpent(int budgetId, double spent);
+    
+    @Insert
+    long insertBudget(Budget budget);
 }
