@@ -1,71 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors - Dark Theme -->
-    <color name="primary_color">#1E88E5</color>
-    <color name="primary_dark">#1565C0</color>
-    <color name="primary_light">#42A5F5</color>
-    <color name="accent_color">#FF7043</color>
-    
+    <!-- Premium Dark Theme Color Palette - Consistent with Light Theme -->
+    <color name="primary_color">#A2D5C6</color>
+    <color name="primary_variant">#8BC4B5</color>
+    <color name="secondary_color">#CFFFE2</color>
+    <color name="secondary_variant">#B8F0CC</color>
+
     <!-- Background Colors - Dark Theme -->
     <color name="background_color">#121212</color>
     <color name="surface_color">#1E1E1E</color>
-    <color name="card_background">#2D2D2D</color>
-    
+    <color name="splash_background">#1A1A1A</color>
+    <color name="floating_background">#2D2D2D</color>
+
+    <!-- Accent Colors - Dark Theme -->
+    <color name="accent_color">#A2D5C6</color>
+    <color name="accent_variant">#8BC4B5</color>
+    <color name="accent_light">#CFFFE2</color>
+
     <!-- Text Colors - Dark Theme -->
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B3B3B3</color>
     <color name="text_hint">#666666</color>
+    <color name="text_disabled">#555555</color>
+    <color name="text_on_primary">#000000</color>
+    <color name="text_on_accent">#000000</color>
     
     <!-- Status Colors - Dark Theme -->
-    <color name="success_color">#4CAF50</color>
-    <color name="error_color">#F44336</color>
-    <color name="warning_color">#FF9800</color>
-    <color name="info_color">#2196F3</color>
+    <color name="success_color">#A2D5C6</color>
+    <color name="income_color">#A2D5C6</color>
+    <color name="expense_color">#FF8A80</color>
+    <color name="warning_color">#FFD54F</color>
+    <color name="error_color">#FF6B6B</color>
+    <color name="info_color">#64B5F6</color>
+
+    <!-- Card Colors - Dark Theme -->
+    <color name="income_card">#1A2E1A</color>
+    <color name="expense_card">#2E1A1A</color>
+    <color name="neutral_card">#1E1E1E</color>
+    <color name="card_primary_background">#2D2D2D</color>
+    <color name="card_accent_background">#1A2E1A</color>
+    <color name="card_background">#2D2D2D</color>
     
-    <!-- Transaction Colors - Dark Theme -->
-    <color name="income_color">#4CAF50</color>
-    <color name="expense_color">#F44336</color>
-    
-    <!-- Chart Colors - Dark Theme -->
-    <color name="chart_color_1">#1E88E5</color>
-    <color name="chart_color_2">#FF7043</color>
-    <color name="chart_color_3">#4CAF50</color>
-    <color name="chart_color_4">#FF9800</color>
-    <color name="chart_color_5">#9C27B0</color>
-    <color name="chart_color_6">#00BCD4</color>
-    
-    <!-- Divider and Border Colors - Dark Theme -->
+    <!-- Progress Colors - Dark Theme -->
+    <color name="progress_green">#A2D5C6</color>
+    <color name="progress_orange">#FFD54F</color>
+    <color name="progress_red">#FF8A80</color>
+
+    <!-- System Colors - Dark Theme -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="overlay_dark">#80000000</color>
+    <color name="overlay_light">#40FFFFFF</color>
+
+    <!-- Dividers and Borders - Dark Theme -->
     <color name="divider_color">#333333</color>
     <color name="border_color">#444444</color>
-    
+    <color name="separator_color">#2A2A2A</color>
+
+    <!-- Interactive States - Dark Theme -->
+    <color name="button_pressed">#8BC4B5</color>
+    <color name="ripple_color">#40A2D5C6</color>
+    <color name="selection_color">#40A2D5C6</color>
+
     <!-- Button Colors - Dark Theme -->
-    <color name="button_primary">#1E88E5</color>
+    <color name="button_primary">#A2D5C6</color>
     <color name="button_secondary">#424242</color>
-    <color name="button_text_primary">#FFFFFF</color>
+    <color name="button_text_primary">#000000</color>
     <color name="button_text_secondary">#B3B3B3</color>
-    
+
     <!-- Input Field Colors - Dark Theme -->
     <color name="input_background">#2D2D2D</color>
     <color name="input_border">#444444</color>
-    <color name="input_border_focused">#1E88E5</color>
-    
+    <color name="input_border_focused">#A2D5C6</color>
+
     <!-- Navigation Colors - Dark Theme -->
     <color name="navigation_background">#1E1E1E</color>
-    <color name="navigation_selected">#1E88E5</color>
+    <color name="navigation_selected">#A2D5C6</color>
     <color name="navigation_unselected">#666666</color>
-    
+    <color name="status_bar_color">#121212</color>
+    <color name="navigation_bar_color">#121212</color>
+    <color name="bottom_nav_background">#1E1E1E</color>
+    <color name="bottom_nav_selected">#A2D5C6</color>
+    <color name="bottom_nav_unselected">#666666</color>
+
+    <!-- Chart Colors - Dark Theme -->
+    <color name="chart_color_1">#64B5F6</color>
+    <color name="chart_color_2">#FF8A80</color>
+    <color name="chart_color_3">#A2D5C6</color>
+    <color name="chart_color_4">#FFD54F</color>
+    <color name="chart_color_5">#CE93D8</color>
+    <color name="chart_color_6">#4DD0E1</color>
+
     <!-- Shimmer Colors - Dark Theme -->
     <color name="shimmer_base">#2D2D2D</color>
     <color name="shimmer_highlight">#3D3D3D</color>
 
-    <!-- Additional Material Design 3 Surface Colors - Dark Theme -->
+    <!-- Material Design 3 Surface Colors - Dark Theme -->
     <color name="outline_color">#444444</color>
     <color name="on_surface_color">#FFFFFF</color>
     <color name="on_surface_variant_color">#B3B3B3</color>
     <color name="on_background_color">#FFFFFF</color>
     <color name="outline_variant_color">#333333</color>
 
-    <!-- Status Bar and System UI - Dark Theme -->
-    <color name="status_bar_color">#121212</color>
-    <color name="navigation_bar_color">#121212</color>
+    <!-- Missing colors for consistency -->
+    <color name="primary_dark">#8BC4B5</color>
+    <color name="primary_light">#CFFFE2</color>
+
+    <!-- Dark Theme Specific Colors -->
+    <color name="dark_primary">#A2D5C6</color>
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_text">#FFFFFF</color>
+
+    <!-- Gradient Colors - Dark Theme -->
+    <color name="gradient_start">#1A2E1A</color>
+    <color name="gradient_end">#2D2D2D</color>
+    <color name="gradient_dark_start">#121212</color>
+    <color name="gradient_dark_end">#1E1E1E</color>
+
+    <!-- Material Design Enhancement - Dark Theme -->
+    <color name="material_mint_50">#1A2E1A</color>
+    <color name="material_mint_100">#1F3A1F</color>
+    <color name="material_mint_200">#2A4A2A</color>
+    <color name="material_mint_300">#3A5A3A</color>
+    <color name="material_mint_400">#A2D5C6</color>
+    <color name="material_mint_500">#8BC4B5</color>
 </resources>

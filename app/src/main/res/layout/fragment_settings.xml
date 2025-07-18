@@ -99,27 +99,36 @@
                     android:textAppearance="@style/TextAppearance.Tams.Headline2"
                     android:layout_marginBottom="16dp" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:minHeight="48dp">
 
                     <TextView
+                        android:id="@+id/tvDarkModeLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginEnd="16dp"
                         android:text="@string/dark_mode"
-                        android:textAppearance="@style/TextAppearance.Tams.Body1" />
+                        android:textAppearance="@style/TextAppearance.Tams.Body1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/switchDarkMode"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <Switch
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchDarkMode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:thumbTint="@color/primary_color"
-                        android:trackTint="@color/primary_color" />
+                        android:trackTint="@color/primary_color"
+                        app:thumbTint="@color/primary_color"
+                        app:trackTint="@color/primary_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
 
@@ -146,27 +155,36 @@
                     android:textAppearance="@style/TextAppearance.Tams.Headline2"
                     android:layout_marginBottom="16dp" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:minHeight="48dp">
 
                     <TextView
+                        android:id="@+id/tvBiometricLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginEnd="16dp"
                         android:text="@string/biometric_auth"
-                        android:textAppearance="@style/TextAppearance.Tams.Body1" />
+                        android:textAppearance="@style/TextAppearance.Tams.Body1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/switchBiometric"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-                    <Switch
+                    <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchBiometric"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:thumbTint="@color/primary_color"
-                        android:trackTint="@color/primary_color" />
+                        android:trackTint="@color/primary_color"
+                        app:thumbTint="@color/primary_color"
+                        app:trackTint="@color/primary_color"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
 
