@@ -96,17 +96,33 @@ public class DataExportUtils {
     
     public static void shareFile(Context context, File file) {
         try {
-            Uri uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", file);
-            
+            Uri uri = FileProvider.getUriForFile(context, "com.tamswallet.app.fileprovider", file);
+
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/csv");
+
+            // Set appropriate MIME type based on file extension
+            String mimeType = "text/plain";
+            if (file.getName().endsWith(".csv")) {
+                mimeType = "text/csv";
+            } else if (file.getName().endsWith(".json")) {
+                mimeType = "application/json";
+            }
+
+            shareIntent.setType(mimeType);
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Tams Wallet Export - " + file.getName());
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            
-            context.startActivity(Intent.createChooser(shareIntent, "Share " + file.getName()));
-            
+
+            context.startActivity(Intent.createChooser(shareIntent, "Bagikan " + file.getName()));
+
         } catch (Exception e) {
-            // Handle error
+            android.util.Log.e("DataExportUtils", "Error sharing file: " + e.getMessage());
+            // Show error to user if context is available
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).runOnUiThread(() -> {
+                    android.widget.Toast.makeText(context, "Gagal membagikan file: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+                });
+            }
         }
     }
     

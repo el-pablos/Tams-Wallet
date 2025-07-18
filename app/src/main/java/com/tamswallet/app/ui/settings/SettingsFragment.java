@@ -19,7 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import com.tamswallet.app.R;
+import com.tamswallet.app.data.repository.TransactionRepository;
+import com.tamswallet.app.data.repository.BudgetRepository;
 import com.tamswallet.app.ui.auth.SplashActivity;
+import com.tamswallet.app.utils.DataExportUtils;
 import com.tamswallet.app.utils.SessionManager;
 
 public class SettingsFragment extends Fragment {
@@ -29,6 +32,8 @@ public class SettingsFragment extends Fragment {
     private MaterialButton btnBackupCsv, btnBackupJson, btnExport, btnReset, btnLogout;
     private TextView tvUserName, tvUserEmail;
     private SessionManager sessionManager;
+    private TransactionRepository transactionRepository;
+    private BudgetRepository budgetRepository;
 
     @Nullable
     @Override
@@ -36,7 +41,9 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         
         sessionManager = new SessionManager(getContext());
-        
+        transactionRepository = TransactionRepository.getInstance(getContext());
+        budgetRepository = BudgetRepository.getInstance(getContext());
+
         initViews(view);
         setupClickListeners();
         loadSettings();
@@ -231,12 +238,128 @@ public class SettingsFragment extends Fragment {
     }
 
     private void exportData(String format) {
-        // TODO: Implement data export functionality
-        // Use FileProvider to share exported files
+        try {
+            long userId = sessionManager.getUserId();
+            if (userId == -1) {
+                Toast.makeText(getContext(), "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            android.util.Log.d("SettingsFragment", "Starting export in format: " + format);
+
+            if ("csv".equals(format)) {
+                exportTransactionsToCSV();
+            } else if ("json".equals(format)) {
+                exportAllDataToJSON();
+            } else {
+                Toast.makeText(getContext(), "Format tidak didukung", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e("SettingsFragment", "Error exporting data: " + e.getMessage());
+            Toast.makeText(getContext(), "Terjadi kesalahan saat mengekspor data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void exportTransactionsToCSV() {
+        long userId = sessionManager.getUserId();
+
+        transactionRepository.getTransactionsByUserId(userId).observe(this, transactions -> {
+            if (transactions != null && !transactions.isEmpty()) {
+                DataExportUtils.exportTransactionsToCSV(getContext(), transactions, new DataExportUtils.ExportCallback() {
+                    @Override
+                    public void onSuccess(java.io.File file) {
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Transaksi berhasil diekspor ke CSV", Toast.LENGTH_SHORT).show();
+
+                                // Show share dialog
+                                new AlertDialog.Builder(getContext())
+                                    .setTitle("Ekspor Berhasil")
+                                    .setMessage("File CSV telah dibuat: " + file.getName() + "\n\nApakah Anda ingin membagikannya?")
+                                    .setPositiveButton("Bagikan", (dialog, which) -> {
+                                        DataExportUtils.shareFile(getContext(), file);
+                                    })
+                                    .setNegativeButton("OK", null)
+                                    .show();
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Gagal mengekspor: " + error, Toast.LENGTH_LONG).show();
+                            });
+                        }
+                    }
+                });
+            } else {
+                Toast.makeText(getContext(), "Tidak ada transaksi untuk diekspor", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void exportAllDataToJSON() {
+        long userId = sessionManager.getUserId();
+
+        transactionRepository.getTransactionsByUserId(userId).observe(this, transactions -> {
+            budgetRepository.getBudgetsByUserId(userId).observe(this, budgets -> {
+                if (transactions != null && budgets != null) {
+                    DataExportUtils.exportAllDataToJSON(getContext(), transactions, budgets, new DataExportUtils.ExportCallback() {
+                        @Override
+                        public void onSuccess(java.io.File file) {
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), "Data berhasil diekspor ke JSON", Toast.LENGTH_SHORT).show();
+
+                                    // Show share dialog
+                                    new AlertDialog.Builder(getContext())
+                                        .setTitle("Ekspor Berhasil")
+                                        .setMessage("File JSON telah dibuat: " + file.getName() + "\n\nApakah Anda ingin membagikannya?")
+                                        .setPositiveButton("Bagikan", (dialog, which) -> {
+                                            DataExportUtils.shareFile(getContext(), file);
+                                        })
+                                        .setNegativeButton("OK", null)
+                                        .show();
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), "Gagal mengekspor: " + error, Toast.LENGTH_LONG).show();
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "Tidak ada data untuk diekspor", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
     private void showExportDialog() {
-        // TODO: Create and show dialog with export options
+        String[] options = {"Ekspor Transaksi (CSV)", "Ekspor Semua Data (JSON)"};
+
+        new AlertDialog.Builder(getContext())
+            .setTitle("Pilihan Ekspor")
+            .setItems(options, (dialog, which) -> {
+                switch (which) {
+                    case 0:
+                        exportData("csv");
+                        break;
+                    case 1:
+                        exportData("json");
+                        break;
+                }
+            })
+            .setNegativeButton("Batal", null)
+            .show();
     }
 
     private void showResetConfirmationDialog() {
