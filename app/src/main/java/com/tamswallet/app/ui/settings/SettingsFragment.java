@@ -164,9 +164,13 @@ public class SettingsFragment extends Fragment {
 
                 // Restart activity to apply theme with delay to ensure preference is saved
                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
+                    androidx.fragment.app.FragmentActivity activity = getActivity();
+                    activity.runOnUiThread(() -> {
                         new android.os.Handler().postDelayed(() -> {
-                            getActivity().recreate();
+                            // Check if activity is still valid before recreating
+                            if (activity != null && !activity.isFinishing() && !activity.isDestroyed()) {
+                                activity.recreate();
+                            }
                         }, 100);
                     });
                 }
