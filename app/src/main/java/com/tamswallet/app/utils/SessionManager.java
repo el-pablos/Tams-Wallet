@@ -102,4 +102,19 @@ public class SessionManager {
         // Check if biometric can be used (user is logged in and has enabled biometric)
         return isLoggedIn() && isBiometricEnabled();
     }
+
+    /**
+     * Create a test user session for development and testing purposes
+     * WARNING: Only use this for development/testing, not in production
+     */
+    public void createTestUserSession() {
+        android.util.Log.d("SessionManager", "Creating test user session for development");
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
+        editor.putLong(KEY_USER_ID, 1); // Test user ID
+        editor.putString(KEY_USER_NAME, "Test User");
+        editor.putString(KEY_USER_EMAIL, "test@tamswallet.com");
+        editor.putBoolean(KEY_BIOMETRIC_ENABLED, false);
+        editor.putBoolean(KEY_TWO_FACTOR_ENABLED, false);
+        editor.apply();
+    }
 }

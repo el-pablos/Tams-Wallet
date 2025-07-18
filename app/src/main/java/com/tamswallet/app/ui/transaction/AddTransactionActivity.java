@@ -1,6 +1,7 @@
 package com.tamswallet.app.ui.transaction;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ArrayAdapter;
@@ -13,6 +14,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.tamswallet.app.R;
 import com.tamswallet.app.data.model.Transaction;
 import com.tamswallet.app.data.repository.TransactionRepository;
+import com.tamswallet.app.ui.auth.LoginActivity;
 import com.tamswallet.app.utils.SessionManager;
 import com.tamswallet.app.utils.ValidationUtils;
 import java.text.SimpleDateFormat;
@@ -42,6 +44,13 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         transactionRepository = TransactionRepository.getInstance(this);
         sessionManager = new SessionManager(this);
+
+        // Check if user is logged in before proceeding
+        if (!sessionManager.isLoggedIn() || sessionManager.getUserId() == -1) {
+            android.util.Log.w("AddTransaction", "User not logged in, showing login dialog");
+            showLoginRequiredDialog();
+            return;
+        }
 
         initViews();
         setupDropdowns();
@@ -123,6 +132,32 @@ public class AddTransactionActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveTransaction());
     }
 
+    private void showLoginRequiredDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Login Diperlukan")
+            .setMessage("Anda harus login terlebih dahulu untuk menambah transaksi. Pilih salah satu opsi:")
+            .setPositiveButton("Login", (dialog, which) -> {
+                // Navigate to login activity
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            })
+            .setNeutralButton("Test Mode", (dialog, which) -> {
+                // Create test user session for development
+                android.util.Log.d("AddTransaction", "Creating test user session for development");
+                sessionManager.createTestUserSession();
+                Toast.makeText(this, "Test user session created", Toast.LENGTH_SHORT).show();
+
+                // Restart the activity to proceed with transaction creation
+                recreate();
+            })
+            .setNegativeButton("Kembali", (dialog, which) -> {
+                finish(); // Close this activity
+            })
+            .setCancelable(false)
+            .show();
+    }
+
     private void saveTransaction() {
         // Reset errors
         tilAmount.setError(null);
@@ -188,9 +223,25 @@ public class AddTransactionActivity extends AppCompatActivity {
                 // Check if user is logged in
                 long userId = sessionManager.getUserId();
                 if (userId == -1) {
-                    Toast.makeText(this, "Silakan login terlebih dahulu", Toast.LENGTH_SHORT).show();
-                    btnSave.setEnabled(true);
-                    btnSave.setText("Simpan");
+                    android.util.Log.w("AddTransaction", "User not logged in, redirecting to login");
+
+                    // Show dialog asking user to login
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Login Diperlukan")
+                        .setMessage("Anda harus login terlebih dahulu untuk menambah transaksi. Apakah Anda ingin login sekarang?")
+                        .setPositiveButton("Login", (dialog, which) -> {
+                            // Navigate to login activity
+                            Intent loginIntent = new Intent(this, LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+                        })
+                        .setNegativeButton("Batal", (dialog, which) -> {
+                            // Re-enable save button
+                            btnSave.setEnabled(true);
+                            btnSave.setText("Simpan");
+                        })
+                        .setCancelable(false)
+                        .show();
                     return;
                 }
 
